@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- **Node.js v20.x** (LTS) or later
+- **Node.js v24.x** or later (tested with v24.14.1)
 - npm (ships with Node)
 
 ## Install
