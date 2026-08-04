@@ -1,38 +1,18 @@
-import { createTask, getTasks } from '@/lib/actions';
+import { getTasks } from '@/lib/actions';
+import TaskForm from '@/app/components/TaskForm';
 
 export default async function Home() {
   const tasks = await getTasks();
 
-  async function handleCreate() {
-    'use server';
-    await createTask({
-      title: 'Sample task from server action',
-      topic: 'General',
-      due_date: '2026-08-15',
-    });
-  }
-
   return (
-    <main style={{ padding: '2rem' }}>
-      <h1>Debug: Tasks</h1>
-      <form action={handleCreate}>
-        <button
-          type="submit"
-          style={{
-            padding: '0.5rem 1rem',
-            background: '#2563eb',
-            color: 'white',
-            borderRadius: '4px',
-            marginBottom: '1rem',
-          }}
-        >
-          Create sample task
-        </button>
-      </form>
-      <ul>
+    <main className="max-w-2xl mx-auto p-8">
+      <h1 className="text-2xl font-bold mb-6">My Tasks</h1>
+      <TaskForm />
+      <ul className="space-y-2">
         {tasks.map((task) => (
-          <li key={task.id}>
-            {task.title} — {task.topic} — {task.status}
+          <li key={task.id} className="border rounded p-3">
+            <strong>{task.title}</strong> — {task.topic} — {task.status}
+            {task.due_date && <span className="text-sm text-gray-500"> (due {task.due_date})</span>}
           </li>
         ))}
       </ul>
