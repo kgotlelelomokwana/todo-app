@@ -105,3 +105,19 @@ export async function getTaskById(id: number): Promise<Task | undefined> {
   const row = db.prepare(`SELECT * FROM tasks WHERE id = @id`).get({ id }) as Task | undefined;
   return row;
 }
+
+export async function getArchivedTasks(): Promise<Task[]> {
+  const rows = db.prepare(`
+    SELECT * FROM tasks WHERE archived_at IS NOT NULL ORDER BY archived_at DESC
+  `).all() as Task[];
+  return rows;
+}
+
+export async function unarchiveTask(id: number) {
+  const stmt = db.prepare(`
+    UPDATE tasks SET archived_at = NULL WHERE id = @id
+  `);
+  stmt.run({ id });
+  revalidatePath('/');
+  revalidatePath('/archived');
+}

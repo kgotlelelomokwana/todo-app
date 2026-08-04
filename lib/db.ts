@@ -3,7 +3,8 @@ import path from 'path';
 import fs from 'fs';
 
 const DB_DIR = path.join(process.cwd(), 'data');
-const DB_PATH = path.join(DB_DIR, 'todo.db');
+const DB_FILE = process.env.DB_FILE ?? 'todo.db';
+const DB_PATH = path.join(DB_DIR, DB_FILE);
 
 if (!fs.existsSync(DB_DIR)) {
   fs.mkdirSync(DB_DIR, { recursive: true });
