@@ -38,10 +38,70 @@ export async function createTask(data: {
   revalidatePath('/');
   return result.lastInsertRowid;
 }
+export type SortField = 'topic' | 'status' | 'due_date';
 
-export async function getTasks(): Promise<Task[]> {
+export async function getTasks(sortBy: SortField = 'due_date'): Promise<Task[]> {
+  const validColumns: Record<SortField, string> = {
+    topic: 'topic',
+    status: 'status',
+    due_date: 'due_date',
+  };
+
+  const column = validColumns[sortBy] ?? 'due_date';
+
   const rows = db.prepare(`
-    SELECT * FROM tasks WHERE archived_at IS NULL ORDER BY created_at DESC
+    SELECT * FROM tasks
+    WHERE archived_at IS NULL
+    ORDER BY ${column} IS NULL, ${column} ASC
   `).all() as Task[];
+
   return rows;
+}
+export async function updateTask(
+  id: number,
+  data: {
+    title: string;
+    description?: string;
+    due_date?: string;
+    topic: string;
+    status: TaskStatus;
+  }
+) {
+  const stmt = db.prepare(`
+    UPDATE tasks
+    SET title = @title,
+        description = @description,
+        due_date = @due_date,
+        topic = @topic,
+        status = @status,
+        updated_at = datetime('now')
+    WHERE id = @id
+  `);
+
+  stmt.run({
+    id,
+    title: data.title,
+    description: data.description ?? null,
+    due_date: data.due_date ?? null,
+    topic: data.topic,
+    status: data.status,
+  });
+
+  revalidatePath('/');
+}
+
+export async function archiveTask(id: number) {
+  const stmt = db.prepare(`
+    UPDATE tasks
+    SET archived_at = datetime('now')
+    WHERE id = @id
+  `);
+
+  stmt.run({ id });
+  revalidatePath('/');
+}
+
+export async function getTaskById(id: number): Promise<Task | undefined> {
+  const row = db.prepare(`SELECT * FROM tasks WHERE id = @id`).get({ id }) as Task | undefined;
+  return row;
 }
