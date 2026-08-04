@@ -1,4 +1,5 @@
 import { getTasks, archiveTask, SortField } from '@/lib/actions';
+import { isOverdue } from '@/lib/utils';
 import TaskForm from '@/app/components/TaskForm';
 import SortControls from '@/app/components/SortControls';
 import Link from 'next/link';
@@ -35,13 +36,11 @@ export default async function Home({
               {task.due_date && (
                 <span className="text-sm text-gray-500"> (due {task.due_date})</span>
               )}
-              {task.due_date &&
-                task.status !== 'complete' &&
-                new Date(task.due_date) < new Date(new Date().toDateString()) && (
-                  <span className="ml-2 text-xs font-semibold text-red-600 bg-red-100 px-2 py-0.5 rounded">
-                    OVERDUE
-                  </span>
-                )}
+              {isOverdue(task.due_date, task.status) && (
+                <span className="ml-2 text-xs font-semibold text-red-600 bg-red-100 px-2 py-0.5 rounded">
+                  OVERDUE
+                </span>
+              )}
             </div>
             <div className="flex gap-3 text-sm">
               <Link href={`/tasks/${task.id}/edit`} className="text-blue-600 hover:underline">

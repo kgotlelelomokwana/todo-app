@@ -17,6 +17,8 @@ export interface Task {
   updated_at: string;
 }
 
+export type SortField = 'topic' | 'status' | 'due_date';
+
 export async function createTask(data: {
   title: string;
   description?: string;
@@ -38,7 +40,6 @@ export async function createTask(data: {
   revalidatePath('/');
   return result.lastInsertRowid;
 }
-export type SortField = 'topic' | 'status' | 'due_date';
 
 export async function getTasks(sortBy: SortField = 'due_date'): Promise<Task[]> {
   const validColumns: Record<SortField, string> = {
@@ -57,6 +58,7 @@ export async function getTasks(sortBy: SortField = 'due_date'): Promise<Task[]> 
 
   return rows;
 }
+
 export async function updateTask(
   id: number,
   data: {
