@@ -25,6 +25,7 @@ Open `http://localhost:3000`.
 - [Third-Party Code](docs/third-party-code.md)
 - [Database Design](docs/database-design.md)
 - [Running It](docs/running-it.md)
+- [AI Usage Transcript](docs/ai-usage.md)
 
 ## Running tests
 
